@@ -5,10 +5,12 @@ import Header from './components/header';
 import LoginPage from './pages/loginPage.jsx';
 import AdminPage from './pages/adminPage.jsx';
 import TestingPage from './pages/testingPage.jsx';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (   
     <BrowserRouter>
+    <Toaster position="top-right" />
       <Routes>
         <Route path="/" element={<h1>Home</h1>} />
         <Route path="/login" element={<LoginPage />} />

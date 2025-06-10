@@ -1,9 +1,12 @@
 import { useState } from "react"
 import axios from "axios";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage(){
     const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")         
+    const [password, setPassword] = useState("")    
+    const navigate  = useNavigate()     
        function handleLogin() {
     if (!email || !password) {
         alert("Please enter both email and password.");
@@ -13,17 +16,26 @@ export default function LoginPage(){
     console.log("Email:", email);
     console.log("Password:", password);
 
-    axios.post("http://localhost:5000/api/user/login", {
+    axios.post(import.meta.env.VITE_BACKEND_URL+"/api/user/login", {
         email: email,
         password: password
     }).then((response) => {
         console.log("Login Successful", response.data);
+        toast.success("Login Successful");
+        localStorage.setItem("token", response.data.token)
+        const user = response.data.user;
+        if(user.role == "admin"){
+           navigate("/admin")
+        }
+        else{
+             navigate("/")
+
+        }
     }).catch((error) => {
         if (error.response) {
-            console.log("Login failed", error.response.data);
-        } else {
-            console.log("Login failed. No response from server.", error.message);
-        }
+           
+            toast.error(error.response.data.message || "Login failed");
+        } 
     });
 
     console.log("Login button clicked");
