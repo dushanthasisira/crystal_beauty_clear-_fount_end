@@ -1,5 +1,7 @@
 import { Link, Routes, Route } from "react-router-dom";
 import {FaUsers} from "react-icons/fa"
+import AdminProductPage from './product.jsx';
+import AddProductFrom from './addProduct.jsx';
 export default function AdminPage(){
     return(
         <div className="w-full h-screen bg-gray-200 flex p-2">
@@ -11,6 +13,7 @@ export default function AdminPage(){
                 <Link to="/admin/users" className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 transition"> 👥 <span>Users</span></Link>
                 <Link to="/admin/products" className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 transition">  📦 <span>Products</span></Link>
                 <Link to="/admin/orders" className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 transition">🧾 <span>Orders</span></Link>
+                <Link to="/admin/addProduct" className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 transition">🧾 <span>addProduct</span></Link>
                 <Link to="/login"className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-red-600 bg-red-500 transition mt-8"> 🚪 <span>Logout</span></Link>
                   
                 </nav>
@@ -19,7 +22,8 @@ export default function AdminPage(){
                  <Routes path="/">
                      <Route path="/" element={<h1>Dashboard</h1>} />
                      <Route path="/users" element={<h1>Users</h1>} />
-                     <Route path="/products" element={<h1>Products</h1>} />
+                     <Route path="/products" element={<AdminProductPage />} />
+                     <Route path="/addProduct" element={<AddProductFrom />} />
                      <Route path="/orders" element={<h1>Orders</h1>} />
                  </Routes>
             </div>
