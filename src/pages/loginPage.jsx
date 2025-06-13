@@ -35,6 +35,7 @@ export default function LoginPage(){
         if (error.response) {
            
             toast.error(error.response.data.message || "Login failed");
+            
         } 
     });
 
