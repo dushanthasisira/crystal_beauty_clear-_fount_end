@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import mediaUpload from "../utils/mediaUpload";
 
 export default function Testing() {
   const [file, setFile] = useState(null);
@@ -10,40 +11,22 @@ export default function Testing() {
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRtbWFwcnZtZmdha2pmd29idWhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MjQ5NzYsImV4cCI6MjA2NTQwMDk3Nn0.q57MkXS74hBcrqirs979JSyJeIUFpo3_Q-CZKKhWQYk"
   );
 
-  async function handleUpload() {
-    if (!file) {
-      toast.error("No file selected");
-      return;
+  function handleUpload() {
+   mediaUpload(file).then(
+    (url)=>{
+      console.log(url)
+       toast.success("File uploaded successfully!");
+
     }
 
-    const fileName = file.name;
-    const arr = fileName.split(".");
-    const fileExtension = arr[arr.length - 1];
-    const newFilename = `${new Date().getTime()}-${fileName.replace(/\s+/g, "-")}`;
-
-    const { data, error } = await supabase.storage
-      .from("images")
-      .upload(newFilename, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-
-    if (error) {
-      console.log("File upload failed:", error.message);
-      toast.error(`Upload failed: ${error.message}`);
-    } else {
-      console.log("File upload successful:", data);
-      toast.success("File uploaded successfully!");
-
-      const publicUrl = supabase
-        .storage
-        .from("images")
-        .getPublicUrl(newFilename)
-        .data
-        .publicUrl;
-
-      toast.success(`URL: ${publicUrl}`);
+   ).catch(
+    (error)=>{
+        toast.error(`Upload failed: ${error.message}`);
     }
+   
+    
+
+   )
   }
 
   return (

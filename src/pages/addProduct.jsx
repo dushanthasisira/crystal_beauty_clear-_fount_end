@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom"
 import toast from "react-hot-toast"
 import { useState } from "react"
 import axios from "axios"
+import mediaUpload from "../utils/mediaUpload";
 
 export default function AddProductForm() {
     const [productId, setProductId] = useState("");
@@ -11,9 +12,27 @@ export default function AddProductForm() {
     const [labelPrice, setLabelPrice] = useState("");
     const [description, setDescription] = useState("");
     const [stock, setStock] = useState("");
+    const [images, setImages] = useState([]);
     const navigate  = useNavigate()  
 
-    function handleSubmit() {
+    async function handleSubmit() {
+
+        const promiseArray = []
+for(let i=0; i<images.length; i++){
+   const promise = mediaUpload(images[i])
+   promiseArray[i] = promise
+}
+
+
+
+const result = await Promise.all(promiseArray)
+
+try{
+
+
+console.log(result)
+
+
         const altNameInArray = altName.split(",");
        
         const product = {
@@ -23,11 +42,7 @@ export default function AddProductForm() {
   price: price,
   labeledPrice: labelPrice,
   description: description,
-  images: [
-    "https://example.com/images/foundation-front.jpg",
-     "https://example.com/images/foundation-front.jpg",
-    "https://example.com/images/foundation-swatch.jpg"
-  ],
+  images: result,
   stock: stock
         };
        
@@ -35,19 +50,19 @@ export default function AddProductForm() {
         const token = localStorage.getItem("token");
      
 
-        axios.post(import.meta.env.VITE_BACKEND_URL+"/api/prodcut", product, {
+       await axios.post(import.meta.env.VITE_BACKEND_URL+"/api/prodcut", product, {
             headers: {
                 "Authorization": "Bearer "+token
             }
-        }).then(
-            () => { 
-            toast.success("Product added successfully")
+        })
+          toast.success("Product added successfully")
             navigate("/admin/products")
-        }).catch(
-            () => {
-          
+
+        }catch(error){
+            console.log(error)
             toast.error("Product addition failed");
-        });
+
+        }
     }
 
     return (
@@ -61,6 +76,10 @@ export default function AddProductForm() {
                 <input onChange={(e) => setLabelPrice(e.target.value)} value={labelPrice} className="w-[400px] h-[50px] border border-gray-500 text-center m-1 rounded-xl" type="number" placeholder="Labeled Price" />
                 <textarea onChange={(e) => setDescription(e.target.value)} value={description} className="w-[400px] h-[50px] border border-gray-500 text-center m-1 rounded-xl" placeholder="Description" />
                 <input onChange={(e) => setStock(e.target.value)} value={stock} className="w-[400px] h-[50px] border border-gray-500 text-center m-1 rounded-xl" type="number" placeholder="Stock" />
+                <input type="file" onChange={
+                    (e)=>{
+                        setImages(e.target.files)
+                    }} multiple className="w-[400px] h-[50px] border border-gray-500 text-center m-1 rounded-xl"  placeholder="Images"  />
                 <div className="w-[400px] h-[100px] flex justify-between items-center">
                     <Link to={"/admin/products"} className="w-[50%] bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-900 transition duration-200 text-center">Cancel</Link>
                     <button onClick={handleSubmit} className="w-[50%] bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-900 transition duration-200 m-3 text-center cursor-pointer">Add Product</button>
