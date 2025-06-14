@@ -6,35 +6,41 @@ import { useNavigate } from "react-router-dom";
 export default function LoginPage(){
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")    
-    const navigate  = useNavigate()     
+    const [loading, setLoading] = useState(false)   
+    const navigate  = useNavigate()  
+     
        function handleLogin() {
+        setLoading(true)
     if (!email || !password) {
         alert("Please enter both email and password.");
         return;
     }
 
-    console.log("Email:", email);
-    console.log("Password:", password);
+   
 
     axios.post(import.meta.env.VITE_BACKEND_URL+"/api/user/login", {
         email: email,
         password: password
     }).then((response) => {
-        console.log("Login Successful", response.data);
+       
         toast.success("Login Successful");
         localStorage.setItem("token", response.data.token)
         const user = response.data.user;
         if(user.role == "admin"){
            navigate("/admin")
+         
         }
         else{
              navigate("/")
+            
 
         }
+          setLoading(false)
     }).catch((error) => {
         if (error.response) {
            
             toast.error(error.response.data.message || "Login failed");
+             setLoading(false)
             
         } 
     });
@@ -48,7 +54,18 @@ export default function LoginPage(){
                     <div className="w-[450px] h-[600px] backdrop-blur-xl shadow-xl rounded-xl flex flex-col justify-center items-center  ">
                         <input onChange={(e)=>{setEmail(e.target.value)}} className="w-[400px] h-[50px] border border-white text-center m-1 rounded-xl "  type="email" placeholder="Email"  />
                         <input  onChange={(e)=>{setPassword(e.target.value)}} className="w-[400px] h-[50px] border border-white text-center m-1 rounded-xl "  type="password" placeholder="Password"  />
-                        <button onClick={handleLogin} className="w-[400px] h-[50px] bg-green-600 text-white border rounded-xl border-white text-center m-1 cursor-pointer">Login</button>
+                        <button onClick={handleLogin} className="w-[400px] h-[50px] bg-green-600 text-white border rounded-xl border-white text-center m-1 cursor-pointer">
+
+                            {
+                                loading?"Loading......":"Login"
+                            }
+                        </button>
+                       <p className="mt-4 text-center text-white">
+        Don't have an account yet?
+        <span  onClick={() => navigate("/register")} className="ml-1  text-blue-300 hover:text-blue-500 font-medium underline cursor-pointer">
+          Register Now
+        </span>
+      </p>
                    
                     </div>
                 </div>
