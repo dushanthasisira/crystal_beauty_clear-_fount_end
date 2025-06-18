@@ -1,58 +1,24 @@
- import axios from "axios";
+import axios from "axios";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { FaPlus, FaTrash, FaEdit } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { FaPlus } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 
 export default function AdminProductPage(){
     const [products,setProduct] = useState([]);
-    const [loaded ,setLoaded] = useState(false)
-    const navigate = useNavigate()
     useEffect(
         ()=>{
-          if(!loaded){
-
-            axios.get(import.meta.env.VITE_BACKEND_URL+"/api/prodcut").then(
-              (response)=>{
-                 console.log(loaded)
-                setProduct(response.data) 
-                 setLoaded(true)           
-                // setLoaded(false)           
-               
-              }
-            )
-
-          }
-             
-        },
-        [loaded]
+             axios.get(import.meta.env.VITE_BACKEND_URL+"/api/prodcut").then(
+        (response)=>{
+          
+           
+             setProduct(response.data)
+        }
     )
-
-async function deleteProduct(id) {
- const token = localStorage.getItem("token");
-  if (token == null) {
-    toast.error("Please login to delete a product");
-    return
-  }
-  try{
-  
-await axios.delete(import.meta.env.VITE_BACKEND_URL+"/api/prodcut/"+id, {
-  headers: {
-    Authorization: "Bearer " + token
-  }
-
-
-  })
-
-  toast.success("Product Deleted Successfully")
-   setLoaded(false)  
-    }catch(error){
-      console.log(error)
-      toast.error("Error Deleting Product")
-      return
-    }
-}
+        },
+        []
+    )
+   
         
     return(
         <div className="w-full p-6 bg-gray-100 min-h-screen relative">
@@ -90,27 +56,18 @@ await axios.delete(import.meta.env.VITE_BACKEND_URL+"/api/prodcut/"+id, {
                         // <h1 key={product.productId}>Product  ID : {product.productId} </h1>
                        
                         // <h1 key={index}>Product  ID : {product.productId+" index : "+index} </h1>
-                <tr key={index} className="hover:bg-gray-300 hover:text-white transition duration-150 ease-in-out">
+                <tr key={index} className="hover:bg-gray-500 hover:text-white transition duration-150 ease-in-out">
                   <td className="px-6 py-4 whitespace-nowrap text-sm">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">{product.productId}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">{product.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">Rs.{product.price}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">Rs.{product.labeledPrice}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">{product.stock}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                    <div className="flex gap-3">
-                      <button className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm cursor-pointer" onClick={() => {deleteProduct(product.productId)}} >
-                        <FaTrash className="text-white" /> Delete </button>
-                      <button className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm cursor-pointer" onClick={() =>
-                          navigate("/admin/eddProduct", {
-                            state:product
-                          })
-                      } >
-                        <FaEdit className="text-white" /> Edit </button>
-                    </div>
-                  </td>
-                </tr> 
-                )
+                </tr>
+
+
+                        
+                    )
                 }
             )
 
@@ -131,5 +88,5 @@ await axios.delete(import.meta.env.VITE_BACKEND_URL+"/api/prodcut/"+id, {
         </div>
       </div>
     </div>
-    )
+  );
 }
