@@ -55,7 +55,7 @@ const product = {
 
         const token = localStorage.getItem("token");
      
-      
+     
        await axios.put(import.meta.env.VITE_BACKEND_URL+"/api/prodcut/"+productId, product, {
             headers: {
                 "Authorization": "Bearer "+token
